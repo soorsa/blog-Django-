@@ -1,0 +1,150 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+
+<style>
+.mt-100 {
+    margin-top: 100px
+}
+
+.mb-100 {
+    margin-bottom: 100px
+}
+
+
+.comment-widgets {
+    position: relative;
+    margin-bottom: 10px
+}
+
+.comment-widgets .comment-row {
+    border-bottom: 1px solid transparent;
+    padding: 14px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin: 10px 0
+}
+
+
+
+.w-100 {
+    width: 100% !important
+}
+
+.m-b-15 {
+    margin-bottom: 15px
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.76563rem;
+    line-height: 1.5;
+    border-radius: 1px
+}
+
+.btn-cyan {
+    color: #fff;
+    background-color: #27a9e3;
+    border-color: #27a9e3
+}
+
+.btn-cyan:hover {
+    color: #fff;
+    background-color: #1a93ca;
+    border-color: #198bbe
+}
+
+.comment-widgets .comment-row:hover {
+    background: rgba(0, 0, 0, 0.05)
+}</style>
+
+
+			<div class="container">
+				
+				<div class="card ml-4" style="max-width:600px">
+					
+					<div class="card-header" >
+				    	<img src="{{object.author.profile.image.url}}" class="media-object rounded-circle d-inline" width="45px" height="45px"><h4 class="card-title ml-2 d-inline" ><a href=" {% url 'user-posts' object.author.username %} ">{{object.author}} </a><small class=" text-secondary">posted on <i>{{object.date_posted}}</i> | <p class="fa fa-eye"></p> {{object.view_count}} view(s)</small></h4>	
+					</div>
+				    <div class="media-body">
+
+						<img class="card-img-top" alt="card image" style="width: 100%; height: 350px " src="{{post.image.url}}">
+						<div class="card-body">
+							<h2 class="media-title text-center">{{object.title}}</h2>
+						
+							<p class="card-text">
+							{{object.content|safe}}
+							</p>
+
+							<hr>
+							{% if object.author == user %}
+								<a href="{% url 'post-update' object.id %}" class="btn btn-secondary btn-sm mt-1 mb-1"><p class="fa fa-edit mt-1 mb-1"></p> Update</a>
+								<a href="{% url 'post-delete' object.id %}" class="btn  btn-danger btn-sm mt-1 mb-1">Delete</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<br>
+					<div class="card my-4">
+			          <h5 class="card-header">Leave a Comment:</h5>
+			            <div class="card-body">
+			            	{% if user.is_authenticated %}
+				            <form action="" method="post">
+				              <div class="form-group">
+				              	{% csrf_token %}
+								{{form|crispy}}
+				        
+				              </div>
+				              <button type="submit" class="btn btn-success btn-sm">Submit</button>
+				            </form>
+				            {% else %}
+				            <p>Sign in to make comments <a href="{% url 'login'%}" class="btn btn-primary">Sign in</a></p>
+				            {% endif %}
+			            </div>
+			        </div>
+
+				<!--<div class="form">
+					<form action="" method="post">
+						{% csrf_token %}
+						{{form|crispy}}
+						<p><input type="submit" name="submit" value="submit" class="btn btn-success btn-sm"></p>
+					</form>
+				</div>-->
+
+
+
+<div class="row d-flex justify-content-left" style="max-width: 600px;" >
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4 class="card-title"><p class="fa fa-comments"></p> Latest Comments</h4>
+            </div>
+			{% for comment in comments %}
+            <div class="comment-widgets">
+
+                <!-- Comment Row -->
+	                <div class="d-flex flex-row comment-row m-t-0">
+	                    <div class="p-2"><img src="{{comment.author.profile.image.url}}" alt="user" width="50" height="50" class="rounded-circle"></div>
+	                    <div class="comment-text">
+	                        <h6 class="font-medium">{{comment.author}}</h6> 
+	                        <p class="m-b-15">{{ comment.content }} </p>
+	                        <div class="comment-footer"> <p class="text-muted float-left">posted on {{comment.created_on}}</p></div>
+	                    </div>
+	                </div> 
+	                <!-- Comment Row -->
+            </div>
+			{% endfor %}                
+
+             <!-- Card -->
+        </div>
+    </div>
+</div>
+
+
+
+			</div>
+
+{% endblock content %}

@@ -1,0 +1,149 @@
+{% extends 'blog/base.html' %}
+
+{% load static %}
+{% block content %}
+
+
+    <style type="text/css">
+      @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.caption {
+  position: absolute;
+  top: 5%;
+  right: 78%;
+}
+
+.card1{
+  margin-bottom: 50px;
+  height: 350px;
+  max-width: 600px;
+  background: white;
+  transition: 0.5s;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+.card1:hover{
+  height: 470px;
+  margin-bottom: 150px;
+  box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
+}
+.card1 .img{
+  position: relative;
+  height: 200px;
+  width: 100%;
+}
+.card1 .img img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.card1 .top-text{
+  padding: 5px;
+}
+.card1 .top-text .name{
+  font-size: 25px;
+  font-weight: 600;
+  color: #202020;
+}
+.card1 .top-text p{
+  font-size: 20px;
+  font-weight: 600;
+  color: #e74c3c;
+  line-height: 20px;
+  flex-wrap: nowrap;
+}
+.card1 .bottom-text{
+  padding: 0 20px 10px 20px;
+  margin-top: 1px;
+  background: white;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.5s;
+}
+.card1:hover .bottom-text{
+  opacity: 1;
+  visibility: visible;
+}
+.card1 .bottom-text .text{
+  text-align: justify;
+}
+.card1 .bottom-text .btn{
+  margin: 10px 0;
+  text-align: left;
+}
+.card1 .bottom-text .btn a{
+  text-decoration: none;
+  background: #e74c3c;
+  color: #f2f2f2;
+  padding: 5px 8px;
+  border-radius: 3px;
+  display: inline-flex;
+  transition: 0.2s;
+}
+.card1 .bottom-text .btn a:hover{
+  transform: scale(0.9);
+}
+@media screen and (max-width: 978px) {
+  .container{
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  .card1{
+    max-width: 700px;
+    margin: 20px 0;
+  }
+}
+
+</style>
+
+<div class="container mt-4">
+
+
+      {% for post in posts %}
+
+      <div class="card1">
+        <div class="img">
+          <img src="{{post.image.url}}"><div class="caption"> </div>
+        </div>
+        <div class="top-text">
+          <div class="name text-center"><a href="{% url 'post-detail' post.id %}">{{post.title}}</a></div><div class="text-center"><small class="text-center"><a href="{% url 'post-by-category' post.category.category_name %}" class="d-inline badge badge-pill badge-info">{{post.category}} </a></small></div>
+
+          <p class="d-inline"><a href="#"><img src="{{post.author.profile.image.url}}" class="media-object rounded-circle d-inline mr-1" width="45px" height="45px"></a><small class=" text-secondary">posted by <a href=" {% url 'user-posts' post.author.username %} ">  {{post.author}} </a> on <i>{{post.date_posted}}</i> | <p class="fa fa-eye d-inline"></p> {{post.view_count}} view(s) </small></p>
+        </div>
+        <div class="bottom-text mb-4">
+          <div class="text">{{post.snippet|safe}} <b>...</b></div>
+          <div class="btn">
+            <a href="#">Read more</a>
+          </div>
+        </div>
+      </div>
+{% endfor %}
+
+</div>
+
+  {% if is_paginated %}
+    {% if page_obj.has_previous %}
+      <a class="btn btn-outline-info mb-4" href="?page=1">first</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <a class="btn btn-outline-info mb-4" href="?page= {{ page_obj.next_page_number }}">next</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">last</a>
+    {% endif %}
+  {% endif %}
+
+{% endblock content %}

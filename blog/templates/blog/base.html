@@ -1,0 +1,512 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  {% if object.post_this %}
+  <title> {{object.title}} </title>
+  {% endif %}
+  {% for lil in posts %}
+  {% if lil.post_this %}
+  <!--<title> {{lil.title}} </title>-->
+  <title> {{title}} </title>
+  {% endif %}
+  {% endfor %}
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+
+
+
+</head>
+<body style="background-color: #D3D3D3;">
+
+<!--Navbar -->
+<nav class=" navbar navbar-expand-lg navbar-light bg-warning fixed-top">
+    <a class="navbar-brand nav-item" href="{% url 'blog-home' %}"><img src = "{% static 'images/ROSY IYKE1.png' %}" height="50px" ></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
+    aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
+
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog-home' %}">  <i class="fa fa-home"></i>  Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog-about' %}">About</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog-contact' %}"> Contact us </a>
+      </li>    
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <!--
+      <li class="nav-item active">
+        <a class="nav-link" href="#">
+          <i class="fab fa-facebook-f"></i> Facebook
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fab fa-instagram"></i> Instagram</a>
+      </li> -->
+      {% if user.is_staff %}
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i><img class="rounded-circle" src="{{user.profile.image.url}}" width="30px" height="30px"></i> {{user.username}} </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
+          <a class="dropdown-item" href="{% url 'profile' %}"><p class="fa fa-user-circle mt-1 mb-1"></p> My Profile</a>
+          <a class="dropdown-item" href="{% url 'post-create' %}"> &#9998; New Post</a>
+          <a class="dropdown-item" href="{% url 'logout' %}"><p class="fa fa-sign-out mt-1 mb-1"></p> Log out</a>
+        </div>
+      </li>
+      {% elif user.is_authenticated %}
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i><img class="rounded-circle" src="{{user.profile.image.url}}" width="30px" height="30px"></i> {{user.username}} </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
+          <a class="dropdown-item" href="{% url 'profile' %}"><p class="fa fa-user-circle mt-1 mb-1"></p> My Profile</a>
+          <a class="dropdown-item" href="{% url 'post-create' %}"> &#9998; New Post</a>
+          <a class="dropdown-item" href="{% url 'logout' %}"><p class="fa fa-sign-out mt-1 mb-1"></p> Log out</a>
+        </div>
+      </li>
+      {% else %}
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-user mr-3"></i> Account </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
+          <a class="dropdown-item" href="{% url 'register' %}"><p class="fa fa-sign-up mt-1 mb-1"></p> Sign Up</a>
+          <a class="dropdown-item" href="{% url 'login' %}"> <p class="fa fa-sign-in mt-1 mb-1"></p> Sign In</a>
+        </div>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+
+
+<br>
+    {% if cat_item %}
+
+<nav class="mt-5 navbar navbar-dark bg-dark justify-content-center " >
+      {% if cat_item.category_name %}
+      {% for catname in cat_item %}
+
+        <b class="navbar-brand nav-item" > <i class="fa fa-list" ></i> {{catname.category_name}}</b>
+        {% endfor %}
+      {% else %}
+
+    <b class="navbar-brand nav-item" > <i class="fa fa-list" ></i> CATEGORIES</b>
+    {% endif %}
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-6"
+    aria-controls="navbarSupportedContent-6" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent-6">
+      {% for cat in cat_item %}
+
+    <ul class="navbar-nav justify-content-center text-center">
+      <li class="nav-item mb-3">
+        <b class="text-center"> <a class="badge badge-pill badge-light mr-3 mt-1" href="{% url 'post-by-category' cat.category_name %}"> {{ cat.category_name }} </a></b>
+      </li>
+      
+    </ul>
+          {% endfor %}
+
+  </div>
+</nav>
+    {% endif %}
+
+
+
+
+<main role='main' class="container mt-5">
+  <div class="row">
+    <div class="col-md-8">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{message.tags}} ">{{message}}</div>
+        {% endfor %}
+        {% endif %}
+
+
+      {% block content %}
+
+      {% endblock content %}
+    </div>
+          <div class="col-md-4">
+            <div class="card my-4">
+                            {% if user.is_authenticated %}
+              <div class="text-center">Create a <a href="{% url 'post-create' %}" class="btn btn-outline-info btn-sm mt-1 mb-1 ml-2 text-center"> <p class="fa fa-pencil mt-1 mb-1 text-center"> </p> post </a> </div>
+              
+              {% else %}
+              <p class="text-muted">
+                <a class="btn btn-primary" href=" {% url "login" %} ">Log in</a> to create a post on this blog.
+              </p>
+              {% endif %}
+
+            </div>
+
+
+            <div class="card my-4">
+              <h5 class="card-header text-center">Trending Post</h5>
+                <div id="trend" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src = "{% static 'images/home-bg.jpg' %}" alt="Los Angeles" width="100%" height="150">
+      <div class="carousel-caption">
+        <p>All top trending posts</p>
+      </div>   
+    </div>
+
+                {% for trend in posts %}
+                {% if trend.trending_post %}
+
+
+    <div class="carousel-item">
+      <a href="{% url 'post-detail' trend.id %}">
+      <img src = "{{trend.image.url}}" alt="Chicago" width="100%" height="150">
+      <div class="carousel-caption">
+        <p>{{trend.title}}</p>
+      </div>
+      </a>   
+    </div>
+
+              {% endif %}
+              {% endfor %}
+
+
+  </div>
+  <a class="carousel-control-prev" href="#trend" data-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </a>
+  <a class="carousel-control-next" href="#trend" data-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </a>
+</div>
+            </div>
+
+
+
+                        <div class="card my-4">
+                          <h5 class="card-header">Search</h5>
+                          <div class="card-body">
+                            <div class="input-group">
+                              <input type="text" class="form-control" placeholder="Search for...">
+                              <span class="input-group-append">
+                                <button class="btn btn-secondary" type="button">Go!</button>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Categories Widget -->
+                        
+            <div class="card my-4">
+              <h5 class="card-header">Side Widget</h5>
+              <div class="card-body">
+                You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
+              </div>
+            </div>
+
+            <div class="card my-4">
+                <div id="demo" class="carousel slide" data-ride="carousel">
+  <ul class="carousel-indicators">
+    <li data-target="#demo" data-slide-to="0" class="active"></li>
+    <li data-target="#demo" data-slide-to="1"></li>
+    <li data-target="#demo" data-slide-to="2"></li>
+    <li data-target="#demo" data-slide-to="3"></li>
+    <li data-target="#demo" data-slide-to="4"></li>
+
+  </ul>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src = "{% static 'images/home-bg.jpg' %}" alt="Los Angeles" width="100%" height="240">
+      <div class="carousel-caption">
+        <h3>Walt Disney</h3>
+        <p>The way to get started is to quit talking and begin doing,</p>
+      </div>   
+    </div>
+    <div class="carousel-item">
+      <img src = "{% static 'images/contact-bg.jpg' %}" alt="Chicago" width="100%" height="240">
+      <div class="carousel-caption">
+        <h3>Chris Grosser</h3>
+        <p>Opportunites don't happen. You create them</p>
+      </div>   
+    </div>
+    <div class="carousel-item">
+      <img src = "{% static 'images/home-bg.jpg' %}" alt="New York" width="100%" height="240">
+      <div class="carousel-caption">
+        <h3>Rosy Iyke's Blog</h3>
+        <p>Success is walking from failure to failure with no loss of enthusiam </p>
+      </div>   
+    </div>
+      <div class="carousel-item">
+      <img src = "{% static 'images/contact-bg.jpg' %}" alt="Chicago" width="100%" height="240">
+      <div class="carousel-caption">
+        <h3>Chris Grosser</h3>
+        <p>Opportunites don't happen. You create them</p>
+      </div>   
+    </div>
+    <div class="carousel-item">
+      <img src = "{% static 'images/contact-bg.jpg' %}" alt="Chicago" width="100%" height="240">
+      <div class="carousel-caption">
+        <h3>Chris Grosser</h3>
+        <p>Opportunites don't happen. You create them</p>
+      </div>   
+    </div>
+
+
+
+
+                {% for ads in posts %}
+                {% if ads.advert_this %}
+
+
+    <div class="carousel-item">
+      <a href="{% url 'post-detail' ads.id %}">
+      <img src = "{{trend.image.url}}" alt="Chicago" width="100%" height="240">
+      <div class="carousel-caption">
+        <h3>{{ads.ad_title}}</h3>
+        <p>{{ ads.content|safe }}</p>
+      </div>
+      </a>   
+    </div>
+
+              {% endif %}
+              {% endfor %}
+
+
+
+
+
+
+  </div>
+  <a class="carousel-control-prev" href="#demo" data-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </a>
+  <a class="carousel-control-next" href="#demo" data-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </a>
+</div>
+            </div>
+
+
+        </div>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<!-- <footer class="page-footer bg-dark device-width font-small stylish-color-dark"> -->
+<footer class="device-width bg-warning page-footer" style="color: #fff;" >
+
+  <!--<div style="background-color: #21d192;">
+    <div class="container">
+
+      <div class="row py-4 d-flex align-items-center">
+
+        <div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0">
+          <h6 class="mb-0">Get connected with us on social networks!</h6>
+        </div>
+
+        <div class="col-md-6 col-lg-7 text-center text-md-right">
+
+          <a class="fb-ic">
+            <i class="fab fa-facebook-f white-text mr-4"> </i>
+          </a>
+          <a class="tw-ic">
+            <i class="fab fa-twitter white-text mr-4"> </i>
+          </a>
+          <a class="gplus-ic">
+            <i class="fab fa-google-plus-g white-text mr-4"> </i>
+          </a>
+          <a class="li-ic">
+            <i class="fab fa-linkedin-in white-text mr-4"> </i>
+          </a>
+          <a class="ins-ic">
+            <i class="fab fa-instagram white-text"> </i>
+          </a>
+
+        </div>
+
+      </div> 
+    ->
+
+    </div>
+  </div>
+-->
+
+  <!-- Footer Links -->
+  <div class="container text-center text-md-left mt-5">
+
+    <!-- Grid row -->
+    <div class="row mt-3 white-text">
+
+      <!-- Grid column -->
+      <div class="col-md-3 col-lg-4 col-xl-3 mb-4">
+
+        <!-- Content -->
+        <h6 class="text-uppercase white-text font-weight-bold mt-5">Company name</h6>
+        <hr class="teal accent-3 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
+          consectetur
+          adipisicing elit.</p>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+
+        <!-- Links -->
+        <h6 class="text-uppercase font-weight-bold mt-5">Products</h6>
+        <hr class="teal accent-3 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>
+          <a class="text-white" href="#!">Order an OriFlame Product</a>
+        </p>
+        <p>
+          <a class="text-white" href="#!">Get a Blog</a>
+        </p>
+        <p>
+          <a class="text-white" href="#!">Get an Online Store</a>
+        </p>
+        <p>
+          <a class="text-white" href="#!">Need a website/Blog/Online Store</a>
+        </p>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+
+        <!-- Links -->
+        <h6 class="text-uppercase font-weight-bold mt-5">Useful links</h6>
+        <hr class="teal accent-3 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>
+          <a class="text-white" href="{% url 'profile' %}">Your Account</a>
+        </p>
+        <p>
+          <a class="text-white" href="#">Success Stories</a>
+        </p>
+        <p>
+          <a class="text-white" href="{% url 'post-create' %}">Post on This Site</a>
+        </p>
+        <p>
+          <a class="text-white" href="{% url 'blog-about' %}">About This Site</a>
+        </p>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+
+        <!-- Links -->
+        <h6 class="text-uppercase font-weight-bold mt-5">Contact</h6>
+        <hr class="teal accent-3 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>
+          <i class="fas fa-home mr-3"></i> New York, NY 10012, US</p>
+        <p>
+          <i class="fas fa-envelope mr-3"></i> info@example.com</p>
+        <p>
+          <i class="fas fa-phone mr-3"></i> + 01 234 567 88</p>
+        <p>
+          <i class="fas fa-print mr-3"></i> + 01 234 567 89</p>
+
+      </div>
+      <!-- Grid column -->
+
+    </div>
+    <!-- Grid row -->
+
+  </div>
+
+
+  <hr>
+
+  <!-- Call to action -->
+  <ul class="list-unstyled list-inline text-center py-2">
+    <li class="list-inline-item">
+      <h5 class="mb-1">Register for free</h5>
+    </li>
+    <li class="list-inline-item">
+      <a href="#!" class="btn btn-danger btn-rounded">Sign up!</a>
+    </li>
+  </ul>
+  <!-- Call to action -->
+
+  <hr>
+  <div class="container text-white">
+    <div class="row py-4 d-flex align-items-center">
+      <!-- Social buttons -->
+      <div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0">
+        <h6 class="mb-0 text-white">Get connected with us on social networks!</h6>
+      </div>
+
+      <ul class="list-unstyled list-inline text-center">
+        <li class="list-inline-item">
+          <a class="btn-floating btn-fb mx-1">
+            <i class="fa fa-facebook-f mr-5"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-tw mx-1">
+            <i class="fa fa-twitter mr-5"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-gplus mx-1">
+            <i class="fa fa-google-plus-g mr-5"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-ins mx-1">
+            <i class="fa fa-instagram mr-5"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-whatsapp mx-1">
+            <i class="fa fa-whatsapp pr-1 mr-5"> </i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!-- Social buttons -->
+
+  <!-- Footer Links -->
+
+  <!-- Copyright -->
+  
+  <div class="footer-copyright text-center text-white-50 py-3">Developed by:  
+    <a class="text-white" href="#"> <img src = "{% static 'images/wonder hub con(new white).png' %}" height="30px"> WonderHUB.com</a>
+  </div>
+  <div class="footer-copyright text-center text-white-50 py-3">© 2020 Copyright:  
+    <a class="text-white" href="#"> RosyIykeBlog.com</a>
+  </div>
+  
+    <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
+
+</body>
+</html>
+

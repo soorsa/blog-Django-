@@ -1,0 +1,10 @@
+{% load static %}
+
+
+  <div class='menuContent' style="height: 50px; background: #fff;" >
+    	{% for cat in cat_item %}
+
+      <span><b class="text-center"> <a class="badge badge-pill badge-info mr-3 mt-1" href="{% url 'post-by-category' cat.category_name %}"> {{ cat.category_name }} </a></b></span>
+
+      {% endfor %}
+  </div>
